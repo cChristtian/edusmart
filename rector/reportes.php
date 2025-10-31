@@ -31,7 +31,7 @@ if ($grupo_id && $materia_id) {
     // Obtener estudiantes y sus calificaciones
     $db->query("SELECT e.id, e.nombre_completo 
                FROM estudiantes e 
-               WHERE e.grupo_id = :grupo_id AND e.activo = 1 
+               WHERE e.grupo_id = :grupo_id  
                ORDER BY e.nombre_completo");
     $db->bind(':grupo_id', $grupo_id);
     $estudiantes = $db->resultSet();
