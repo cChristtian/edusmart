@@ -710,6 +710,12 @@ CREATE TABLE `niveles` (
   `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
+
+INSERT INTO niveles (nombre, descripcion)
+VALUES 
+('Primer ciclo', 'Incluye los grados de 1º a 3º de educación básica'),
+('Segundo ciclo', 'Incluye los grados de 4º a 6º de educación básica'),
+('Tercer ciclo', 'Incluye los grados de 7º a 9º de educación básica');
 -- --------------------------------------------------------
 
 --
@@ -797,6 +803,13 @@ CREATE TABLE `roles` (
   `id` int NOT NULL,
   `nombre` varchar(50) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+
+INSERT INTO roles (nombre)
+VALUES
+('Administrador'),
+('Rector'),
+('Maestro');
 
 -- --------------------------------------------------------
 
