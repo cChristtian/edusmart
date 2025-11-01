@@ -59,7 +59,7 @@ protegerPagina([2]); // Solo rector
                     <div class="">
                         <h3 class="text-xl font-semibold mb-2">Total Estudiantes</h3>
                         <?php
-                        $db->query("SELECT COUNT(*) as total FROM estudiantes WHERE activo = 1");
+                        $db->query("SELECT COUNT(*) as total FROM estudiantes");
                         $result = $db->single();
                         ?>
                         <p class="text-3xl font-bold"><?php echo $result->total; ?></p>

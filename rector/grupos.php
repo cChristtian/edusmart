@@ -47,7 +47,7 @@ if (isset($_GET['ver'])) {
 
     if ($grupo_detalle) {
         // Obtener estudiantes del grupo
-        $db->query("SELECT * FROM estudiantes WHERE grupo_id = :grupo_id AND activo = 1 ORDER BY nombre_completo");
+        $db->query("SELECT * FROM estudiantes WHERE grupo_id = :grupo_id ORDER BY nombre_completo");
         $db->bind(':grupo_id', $grupo_id);
         $estudiantes = $db->resultSet();
     }
@@ -56,12 +56,15 @@ if (isset($_GET['ver'])) {
 
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Grupos - <?php echo APP_NAME; ?></title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="<?= ALERTIFY_CSS ?>">
 </head>
+
 <body class="bg-gray-100">
     <div class="flex">
         <!-- Sidebar (repetir el mismo de dashboard.php) -->
@@ -152,6 +155,57 @@ if (isset($_GET['ver'])) {
                                 </form>
                             </div>
                         </div>
+                        <!-- Tabla de estudiantes -->
+                        <div class="bg-white p-6 rounded-lg shadow">
+                            <h3 class="text-xl font-semibold mb-4">Estudiantes</h3>
+                            <?php if (count($estudiantes) > 0): ?>
+                                <div class="overflow-x-auto">
+                                    <table class="min-w-full divide-y divide-gray-200">
+                                        <thead class="bg-gray-50">
+                                            <tr>
+                                                <th
+                                                    class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                                    Nombre</th>
+                                                <th
+                                                    class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                                    Fecha Nac.</th>
+                                                <th
+                                                    class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                                    Estado</th>
+                                                <th
+                                                    class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                                    Acciones</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody class="bg-white divide-y divide-gray-200">
+                                            <?php foreach ($estudiantes as $est): ?>
+                                                <tr>
+                                                    <td class="px-6 py-4 whitespace-nowrap">
+                                                        <?= htmlspecialchars($est->nombre_completo); ?>
+                                                    </td>
+                                                    <td class="px-6 py-4 whitespace-nowrap">
+                                                        <?= date('d/m/Y', strtotime($est->fecha_nacimiento)); ?>
+                                                    </td>
+                                                    <td class="px-6 py-4 whitespace-nowrap">
+                                                        <?= $est->estado; ?>
+                                                    </td>
+                                                    <td class="px-6 py-4 whitespace-nowrap">
+                                                        <a href="#" class="text-blue-500 hover:text-blue-700 ver-estudiante"
+                                                            data-id="<?= $est->id; ?>">Ver</a>
+                                                        &nbsp&nbsp&nbsp
+                                                        <button class="btn-cambiar-estado text-red-700"
+                                                            data-id="<?= $est->id; ?>">Cambiar estado</button>
+
+                                                    </td>
+                                                </tr>
+                                            <?php endforeach; ?>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            <?php else: ?>
+                                <p class="text-gray-500">No hay estudiantes registrados.</p>
+                            <?php endif; ?>
+                        </div>
                         <!-- Modal estudiante -->
                         <div id="modalEstudiante"
                             class="hidden fixed inset-0 bg-gray-700 bg-opacity-60 flex items-center justify-center p-4 z-50">
@@ -184,63 +238,34 @@ if (isset($_GET['ver'])) {
                                 </div>
                             </div>
                         </div>
-                        <!-- Modal eliminar estudiante -->
-                        <div id="modalEliminar"
+                        <!-- Modal cambiar estado de estudiante -->
+                        <div id="modalCambiarEstado"
                             class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
                             <div class="bg-white rounded-xl shadow-xl w-11/12 max-w-md p-6">
-                                <h3 class="text-xl font-semibold text-gray-800 mb-4">Confirmar eliminación</h3>
-                                <p class="text-gray-600 mb-6">¿Seguro que deseas eliminar este estudiante y todas sus
-                                    relaciones? Esta acción no se puede deshacer.</p>
+                                <h3 class="text-xl font-semibold text-gray-800 mb-4">Cambiar estado del estudiante</h3>
+                                <!-- Opciones de estado (opcional) -->
+                                <div class="mb-4">
+                                    <label for="estadoEstudiante" class="block text-sm font-medium text-gray-700 mb-1">
+                                        Selecciona el nuevo estado:
+                                    </label>
+                                    <select id="estadoEstudiante"
+                                        class="w-full border rounded-lg px-3 py-2 focus:ring focus:ring-indigo-200 focus:border-indigo-500">
+                                        <option value="activo">Activo</option>
+                                        <option value="inactivo">Inactivo</option>
+                                        <option value="retirado">Retirado</option>
+                                        <option value="egresado">Egresado</option>
+                                    </select>
+                                </div>
+
                                 <div class="flex justify-end space-x-3">
-                                    <button id="cancelEliminar"
+                                    <button id="cancelCambioEstado"
                                         class="px-4 py-2 border rounded-lg hover:bg-gray-100 transition">Cancelar</button>
-                                    <button id="confirmEliminar"
-                                        class="bg-red-500 text-white px-4 py-2 rounded-lg hover:bg-red-600 transition">Eliminar</button>
+                                    <button id="confirmCambioEstado"
+                                        class="bg-yellow-500 text-white px-4 py-2 rounded-lg hover:bg-yellow-600 transition">
+                                        Confirmar cambio
+                                    </button>
                                 </div>
                             </div>
-                        </div>
-                        <!-- Tabla de estudiantes -->
-                        <div class="bg-white p-6 rounded-lg shadow">
-                            <h3 class="text-xl font-semibold mb-4">Estudiantes</h3>
-                            <?php if (count($estudiantes) > 0): ?>
-                                <div class="overflow-x-auto">
-                                    <table class="min-w-full divide-y divide-gray-200">
-                                        <thead class="bg-gray-50">
-                                            <tr>
-                                                <th
-                                                    class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                                    Nombre</th>
-                                                <th
-                                                    class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                                    Fecha Nac.</th>
-                                                <th
-                                                    class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                                    Acciones</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody class="bg-white divide-y divide-gray-200">
-                                            <?php foreach ($estudiantes as $est): ?>
-                                                <tr>
-                                                    <td class="px-6 py-4 whitespace-nowrap">
-                                                        <?php echo htmlspecialchars($est->nombre_completo); ?>
-                                                    </td>
-                                                    <td class="px-6 py-4 whitespace-nowrap">
-                                                        <?php echo date('d/m/Y', strtotime($est->fecha_nacimiento)); ?>
-                                                    </td>
-                                                    <td class="px-6 py-4 whitespace-nowrap">
-                                                        <a href="#" class="text-blue-500 hover:text-blue-700 ver-estudiante"
-                                                            data-id="<?php echo $est->id; ?>">Ver</a>
-                                                        <button class="btn-eliminar-estudiante text-red-500 hover:text-red-700"
-                                                            data-id="<?php echo $est->id; ?>">Eliminar</button>
-                                                    </td>
-                                                </tr>
-                                            <?php endforeach; ?>
-                                        </tbody>
-                                    </table>
-                                </div>
-                            <?php else: ?>
-                                <p class="text-gray-500">No hay estudiantes registrados.</p>
-                            <?php endif; ?>
                         </div>
                     <?php else: ?>
                         <div class="bg-white p-6 rounded-lg shadow text-center">
@@ -251,8 +276,9 @@ if (isset($_GET['ver'])) {
             </div>
         </div>
     </div>
+    <script src="<?= ALERTIFY ?>"></script>
     <script>
-        // modal con datos del estudiante
+        // === Abrir modal de detalles del estudiante ===
         document.querySelectorAll('.ver-estudiante').forEach(link => {
             link.addEventListener('click', function (e) {
                 e.preventDefault();
@@ -275,10 +301,10 @@ if (isset($_GET['ver'])) {
                         if (actividades.length > 0) {
                             actividades.forEach(a => {
                                 actividadesDiv.innerHTML += `
-                    <div class="border-b py-2">
-                        <p><b>${a.actividad}</b> (Trimestre ${a.trimestre})</p>
-                        <p>Calificación: <span class="font-semibold text-blue-700">${a.calificacion ?? 'Sin calificación'}</span></p>
-                    </div>`;
+                                <div class="border-b py-2">
+                                    <p><b>${a.actividad}</b> (Trimestre ${a.trimestre})</p>
+                                    <p>Calificación: <span class="font-semibold text-blue-700">${a.calificacion ?? 'Sin calificación'}</span></p>
+                                </div>`;
                             });
                         } else {
                             actividadesDiv.innerHTML = '<p class="text-gray-500 italic">No tiene actividades registradas.</p>';
@@ -293,7 +319,7 @@ if (isset($_GET['ver'])) {
             });
         });
 
-        // Cerrar modal
+        // === Cerrar modal principal ===
         function cerrarModal() {
             document.getElementById('modalEstudiante').classList.add('hidden');
         }
@@ -301,52 +327,62 @@ if (isset($_GET['ver'])) {
         document.getElementById('cerrarBtn').onclick = cerrarModal;
         window.onclick = e => { if (e.target === document.getElementById('modalEstudiante')) cerrarModal(); };
 
-        let estudianteAEliminar = null;
 
-        document.querySelectorAll('.btn-eliminar-estudiante').forEach(btn => {
+        // === Nuevo flujo: cambiar estado del estudiante ===
+        let estudianteSeleccionado = null;
+
+        // Botón que abre el modal de cambio de estado
+        document.querySelectorAll('.btn-cambiar-estado').forEach(btn => {
             btn.addEventListener('click', function (e) {
                 e.preventDefault();
-                estudianteAEliminar = this.dataset.id;
-                document.getElementById('modalEliminar').classList.remove('hidden');
+                estudianteSeleccionado = this.dataset.id;
+                document.getElementById('modalCambiarEstado').classList.remove('hidden');
             });
         });
 
-        // Cancelar
-        document.getElementById('cancelEliminar').addEventListener('click', () => {
-            estudianteAEliminar = null;
-            document.getElementById('modalEliminar').classList.add('hidden');
+        // Cancelar cambio de estado
+        document.getElementById('cancelCambioEstado').addEventListener('click', () => {
+            estudianteSeleccionado = null;
+            document.getElementById('modalCambiarEstado').classList.add('hidden');
         });
 
-        // Confirmar eliminación
-        document.getElementById('confirmEliminar').addEventListener('click', () => {
-            if (!estudianteAEliminar) return;
+        // Confirmar cambio de estado
+        document.getElementById('confirmCambioEstado').addEventListener('click', () => {
+            if (!estudianteSeleccionado) return;
 
-            fetch('eliminar_estudiante.php', {
+            const estadoSeleccionado = document.getElementById('estadoEstudiante').value;
+
+            fetch('estado_estudiante.php', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-                body: `estudiante_id=${estudianteAEliminar}`
+                body: new URLSearchParams({
+                    estudiante_id: estudianteSeleccionado,
+                    nuevo_estado: estadoSeleccionado
+                })
             })
                 .then(res => res.json())
                 .then(data => {
                     if (data.error) {
-                        alert(data.error);
+                        alertify.error('Algo salio mal');
                     } else {
-                        const fila = document.querySelector(`tr[data-id="${estudianteAEliminar}"]`);
-                        if (fila) fila.remove();
-
-                        alert(data.success);
+                        alertify.success('Cambio exitoso');
+                        setTimeout(() => {
+                            location.reload();
+                        }, 1700);
                     }
-                    estudianteAEliminar = null;
-                    document.getElementById('modalEliminar').classList.add('hidden');
+
+                    estudianteSeleccionado = null;
+                    document.getElementById('modalCambiarEstado').classList.add('hidden');
                 })
                 .catch(err => {
                     console.error(err);
-                    alert('Error al eliminar estudiante.');
-                    estudianteAEliminar = null;
-                    document.getElementById('modalEliminar').classList.add('hidden');
+                    alert('Error al cambiar estado del estudiante.');
+                    estudianteSeleccionado = null;
+                    document.getElementById('modalCambiarEstado').classList.add('hidden');
                 });
         });
     </script>
+
 
 </body>
 
