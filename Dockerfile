@@ -1,9 +1,9 @@
 # =====================================================
-#  Dockerfile para Render - Proyecto PHP 7.4 con Composer
+#  Dockerfile para Render - Proyecto PHP 8.2 con Composer
 # =====================================================
 
-# Imagen base con PHP 7.4 y Apache
-FROM php:7.4-apache
+# Imagen base con PHP 8.2 y Apache
+FROM php:8.2-apache
 
 # Habilitar módulos de Apache necesarios
 RUN a2enmod rewrite
