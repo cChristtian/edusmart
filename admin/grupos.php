@@ -104,7 +104,7 @@ $maestros = $db->resultSet();
 
 <body class="bg-gray-100">
     <div class="flex">
-        <?php include __DIR__ . '../partials/sidebar.php'; ?>
+        <?php require_once('./partials/sidebar.php') ?>
 
         <div class="flex-1 p-8">
             <div class="flex justify-between items-center mb-6">
