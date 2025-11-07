@@ -11,10 +11,11 @@ $db->query("SELECT COUNT(DISTINCT g.id) as total_grupos,
                    COUNT(DISTINCT m.id) as total_materias
             FROM grupos g
             JOIN estudiantes e ON g.id = e.grupo_id
-            JOIN maestros_materias mm ON mm.maestro_id = :maestro_id
+            JOIN maestros_materias mm ON mm.maestro_id = :mm_maestro
             JOIN materias m ON mm.materia_id = m.id
-            WHERE g.maestro_id = :maestro_id");
-$db->bind(':maestro_id', $maestro_id);
+            WHERE g.maestro_id = :g_maestro");
+$db->bind(':mm_maestro', $maestro_id);
+$db->bind(':g_maestro', $maestro_id);
 $estadisticas = $db->single();
 
 // Obtener grupos recientes
