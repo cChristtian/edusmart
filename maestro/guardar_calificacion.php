@@ -48,18 +48,19 @@ if ($accion === 'bloquear' && (empty($data['nota_id']) || !is_numeric($data['not
 }
 
 try {
-    // Verificar permiso del maestro
+    // Verificar permiso del maestro (usar placeholders distintos si se repite el mismo parámetro)
     $db->query("
         SELECT a.id
         FROM actividades a
         JOIN grupos g ON a.grupo_id = g.id
         JOIN maestros_materias mm ON a.materia_id = mm.materia_id
         WHERE a.id = :actividad_id
-        AND g.maestro_id = :maestro_id
-        AND mm.maestro_id = :maestro_id
+        AND g.maestro_id = :maestro_where
+        AND mm.maestro_id = :maestro_join
     ");
-    $db->bind(':actividad_id', $data['actividad_id']);
-    $db->bind(':maestro_id', $_SESSION['user_id']);
+    $db->bind(':actividad_id', $actividad_id);
+    $db->bind(':maestro_where', $_SESSION['user_id']);
+    $db->bind(':maestro_join', $_SESSION['user_id']);
     $actividad = $db->single();
 
     if (!$actividad) {
