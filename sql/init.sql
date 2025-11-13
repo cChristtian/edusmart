@@ -923,8 +923,8 @@ DELIMITER ;
 -- Constraints for table `actividades`
 --
 ALTER TABLE `actividades`
-  ADD CONSTRAINT `actividades_ibfk_1` FOREIGN KEY (`materia_id`) REFERENCES `materias` (`id`),
-  ADD CONSTRAINT `actividades_ibfk_2` FOREIGN KEY (`grupo_id`) REFERENCES `grupos` (`id`);
+  ADD CONSTRAINT `actividades_ibfk_1` FOREIGN KEY (`materia_id`) REFERENCES `materias` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  ADD CONSTRAINT `actividades_ibfk_2` FOREIGN KEY (`grupo_id`) REFERENCES `grupos` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 --
 -- Constraints for table `estudiantes`
@@ -956,14 +956,14 @@ ALTER TABLE `materias_niveles`
 -- Constraints for table `notas`
 --
 ALTER TABLE `notas`
-  ADD CONSTRAINT `notas_ibfk_1` FOREIGN KEY (`estudiante_id`) REFERENCES `estudiantes` (`id`),
-  ADD CONSTRAINT `notas_ibfk_2` FOREIGN KEY (`actividad_id`) REFERENCES `actividades` (`id`);
+  ADD CONSTRAINT `notas_ibfk_1` FOREIGN KEY (`estudiante_id`) REFERENCES `estudiantes` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  ADD CONSTRAINT `notas_ibfk_2` FOREIGN KEY (`actividad_id`) REFERENCES `actividades` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 --
 -- Constraints for table `solicitudes_modificacion`
 --
 ALTER TABLE `solicitudes_modificacion`
-  ADD CONSTRAINT `solicitudes_modificacion_ibfk_1` FOREIGN KEY (`nota_id`) REFERENCES `notas` (`id`);
+  ADD CONSTRAINT `solicitudes_modificacion_ibfk_1` FOREIGN KEY (`nota_id`) REFERENCES `notas` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,;
 
 --
 -- Constraints for table `usuarios`

@@ -33,7 +33,7 @@ try {
         $db->beginTransaction();
 
         $db->query("UPDATE solicitudes_modificacion 
-                    SET estado = :estado, fecha_resolucion = NOW()
+                    SET estado = :estado, fecha_respuesta = NOW()
                     WHERE id = :id");
         $db->bind(':estado', $accion);
         $db->bind(':id', $id, PDO::PARAM_INT);
