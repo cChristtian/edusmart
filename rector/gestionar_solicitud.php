@@ -19,8 +19,8 @@ try {
 
     $db = new Database();
 
-    // Aprobada / Rechazada: solo si está pendiente
-    if ($accion === 'aprobada' || $accion === 'rechazada') {
+    // Aceptada / Rechazada: solo si está pendiente
+    if ($accion === 'aceptada' || $accion === 'rechazada') {
         $db->query("SELECT id, nota_id FROM solicitudes_modificacion WHERE id = :id AND estado = 'pendiente' LIMIT 1");
         $db->bind(':id', $id, PDO::PARAM_INT);
         $sol = $db->single();
@@ -50,7 +50,7 @@ try {
 
         echo json_encode([
             'ok' => true,
-            'message' => ($accion === 'aprobada' ? 'Solicitud aprobada.' : 'Solicitud rechazada.')
+            'message' => ($accion === 'aceptada' ? 'Solicitud aceptada.' : 'Solicitud rechazada.')
         ]);
         exit;
     }

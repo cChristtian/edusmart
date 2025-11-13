@@ -65,7 +65,7 @@ $solicitudes = $db->resultSet();
             case 'pendiente':
                 echo 'border-yellow-400 bg-yellow-50';
                 break;
-            case 'aprobada':
+            case 'aceptada':
     echo 'border-green-400 bg-green-50';
                 break;
             case 'rechazada':
@@ -97,7 +97,7 @@ $solicitudes = $db->resultSet();
                                                     case 'pendiente':
                                                         echo 'text-yellow-600';
                                                         break;
-                                                    case 'aprobada':
+                                                    case 'aceptada':
                                                         echo 'text-green-600';
                                                         break;
                                                     case 'rechazada':
@@ -114,7 +114,7 @@ $solicitudes = $db->resultSet();
                                               <div class="mt-3 flex gap-2">
                                                 <button
                                                   class="px-3 py-1 rounded-lg bg-green-600 text-white hover:bg-green-700 transition"
-                                                  onclick="confirmarGestion(<?= (int)$solicitud->id ?>, 'aprobada')">
+                                                  onclick="confirmarGestion(<?= (int)$solicitud->id ?>, 'aceptada')">
                                                   Aceptar
                                                 </button>
 
@@ -172,11 +172,11 @@ async function postAccion(id, accion) {
 
 
 function iconoPorAccion(a){
-  return a==='aprobada' ? 'success' : (a==='rechazada' ? 'error' : 'warning');
+  return a==='aceptada' ? 'success' : (a==='rechazada' ? 'error' : 'warning');
 }
 
 async function confirmarGestion(id, accion) {
-  const txt = accion === 'aprobada'
+  const txt = accion === 'aceptada'
     ? '¿Estás seguro de ACEPTAR? Esta acción es definitiva.'
     : '¿Estás seguro de RECHAZAR? Esta acción es definitiva.';
 
@@ -187,7 +187,7 @@ async function confirmarGestion(id, accion) {
     showCancelButton: true,
     confirmButtonText: 'Sí, continuar',
     cancelButtonText: 'Cancelar',
-    confirmButtonColor: accion==='aprobada' ? '#16a34a' : '#dc2626'
+    confirmButtonColor: accion==='aceptada' ? '#16a34a' : '#dc2626'
   });
   if (!isConfirmed) return;
 
